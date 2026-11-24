@@ -2,6 +2,8 @@
 
 How work is planned, built, reviewed and tracked in this project. These rules are written so they can be copied into any repository unchanged; [Adopting these rules](#adopting-these-rules) at the end lists the few things to fill in.
 
+> **Our highest goal is to avoid AI slop:** redundant or duplicated code, overly complicated code, and common code repeated in several places that could be cleanly generalized into one simpler shared method or class. Every rule below serves that goal; see [5.3](#53-simplicity-and-clarity).
+
 ## Contents
 
 1. [Roles](#1-roles)
@@ -116,9 +118,14 @@ Rate how long a competent engineer needs to review the PR:
 - Never open a Very large PR. Split it first.
 - A rough yardstick: Simple is one focused piece under about 200 changed lines including tests; Medium is up to about 400, or fewer if the logic is tricky (concurrency, media processing, a new model). A server piece and the screen that uses it are separate PRs when together they would pass that.
 
-### 5.3 Simplicity
-- Keep the design, the change and the data structures as simple as possible.
-- Make the smallest change that solves the problem. Don't add scope; note follow-up work instead.
+### 5.3 Simplicity and clarity
+Avoiding AI slop is the highest goal of this project.
+
+- **No duplication.** Don't write redundant or duplicated code. When the same logic appears in more than one place, generalize it into one simpler shared method or class, as long as the result is cleaner than the copies.
+- **No needless complexity.** Keep the design, the change and the data structures as simple as possible.
+- **Smallest change.** Make the smallest change that solves the problem. Don't add scope; note follow-up work instead.
+- **Clear to a human reader.** Code is as clear as possible while staying concise, and its intent is readily obvious to a professional software engineer. Choose names carefully.
+- **Comments only where needed.** Code should be clear enough not to need comments. Comment only what would not be obvious to a professional software engineer, and summarize what public methods used outside their class do.
 
 ### 5.4 Tests and coverage (code changes only)
 - All new or changed code has unit tests.
@@ -200,7 +207,8 @@ No code changes: "No code changes."
 
 - [ ] On a non-main branch, pushed, PR open (stacked if it depends on another open PR)
 - [ ] Size rated, Simple or Medium (Large only with a reason), never Very large
-- [ ] Simplest design and smallest change that solves the problem; no added scope, follow-up work noted instead
+- [ ] No AI slop (5.3): no duplicated or redundant code, shared logic generalized, simplest design and smallest change, no added scope
+- [ ] Clear names, code readable without comments; comments only for the non-obvious and for public methods used outside their class
 - [ ] Code changes: unit tests added, coverage reported, ideally 80% or more
 - [ ] Code changes: build, test, lint, format and type check pass
 - [ ] Code changes: logging at meaningful operations and boundaries
