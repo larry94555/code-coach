@@ -119,29 +119,26 @@ Rate how long a competent engineer needs to review the PR:
 - A rough yardstick: Simple is one focused piece under about 200 changed lines including tests; Medium is up to about 400, or fewer if the logic is tricky (concurrency, media processing, a new model). A server piece and the screen that uses it are separate PRs when together they would pass that.
 
 ### 5.3 Simplicity and clarity
-Avoiding AI slop is the highest goal of this project.
-
-- **No duplication.** Don't write redundant or duplicated code. When the same logic appears in more than one place, generalize it into one simpler shared method or class, as long as the result is cleaner than the copies.
+- **No duplication.** Don't write redundant or duplicated code. When the same logic appears in more than one place, generalize it into one simpler shared method or class, but only where the shared version is actually simpler than the copies. Don't build abstractions ahead of a real second use.
 - **No needless complexity.** Keep the design, the change and the data structures as simple as possible.
 - **Smallest change.** Make the smallest change that solves the problem. Don't add scope; note follow-up work instead.
 - **Clear to a human reader.** Code is as clear as possible while staying concise, and its intent is readily obvious to a professional software engineer. Choose names carefully.
 - **Comments only where needed.** Code should be clear enough not to need comments. Comment only what would not be obvious to a professional software engineer, and summarize what public methods used outside their class do.
 
 ### 5.4 Tests and coverage (code changes only)
-- All new or changed code has unit tests.
+- New or changed behaviour has meaningful verification suited to it: unit tests for logic, functional or integration tests where units alone can't show it works, and a manual check where neither fits. Configuration and markup need tests only when they carry behaviour. Explain any exception in the PR.
 - Aim for 80% line coverage or more on new or materially changed code, and report the number. Don't add meaningless tests to reach it.
-- Add functional tests when unit tests alone can't show the code works.
 - Unit tests use fake engines or services, so CI runs without special hardware, paid APIs or secrets. A PR that touches a real engine or service proves it with a manual run.
 - The repo's build, test, lint, format and type-check commands must pass before the PR is reported done.
 - Never skip, disable or loosen a test to get CI green. If CI fails on something the PR didn't touch, show that it passes on main, re-run once, and say so in a PR comment.
 
 ### 5.5 Logging (code changes only)
-At meaningful operations and at slow or failure-prone boundaries (requests, model calls, file and network I/O), log:
-- errors, with enough context to act on them;
-- the time taken for meaningful actions;
-- evidence that the code ran, such as a clear info line at the start or end.
+Logging is for what someone will act on, not boilerplate for every operation:
+- errors and failures, with enough context to act on them;
+- the time taken at important slow boundaries (requests, model calls, file and network I/O);
+- one clear info line where the owner needs to confirm a feature ran (it becomes the log line named in the manual test steps).
 
-Don't log inside pure functions or trivial operations just to satisfy this rule. Never log secrets or personal content (passwords, keys, uploaded files, message text).
+Don't log inside pure functions or routine operations. Never log secrets or personal content (passwords, keys, uploaded files, message text).
 
 ### 5.6 Proof that it works (code changes only)
 - **UI changes:** a screenshot of the running app showing the change.
@@ -152,10 +149,10 @@ Don't log inside pure functions or trivial operations just to satisfy this rule.
 
 ### 5.7 Manual test steps
 - Every code PR says how the owner tests it by hand: how to get the branch, how to start the app, the steps, and exactly what to see in the UI or in the logs (the log line's text) to know the code ran.
-- **Getting the branch.** Use one pair, never both `git fetch` and `git pull`:
-  - a branch new to the owner's machine: `git fetch origin`, then `git checkout <branch>`;
+- **Getting the branch.**
+  - a branch new to the owner's machine: `git fetch origin`, then `git checkout --track origin/<branch>`;
   - a branch the owner already has: `git checkout <branch>`, then `git pull`.
-- **Every platform the owner uses.** Give separate command blocks for each (for example macOS/Linux, Windows Command Prompt and Windows PowerShell) whenever the commands differ. Watch for venv activation, `python3` vs `py`, `&&` (not in Windows PowerShell 5.1), environment variables, path separators, `curl` (an alias in PowerShell; use `curl.exe`), and file commands. The same applies to setup steps in the README and guides.
+- **Every platform the owner uses.** Commands must run as written on each supported platform (listed in the README); give a separate block for each where they differ. The same applies to setup steps in the README and guides. Known pitfalls go in a platform guide in `docs/guides/` once they come up, not here.
 
 ### 5.8 Action Needed
 When a PR needs the owner to do something outside the code (create an account, get keys, set config or environment variables, change DNS, a payment provider or another service, run a command on a server), the description has a section called **Action Needed** listing those actions step by step, in order, with where to click or what to type and how to check each one worked. Secrets never go in the repository or the PR: say where to put them (for example `.env`).
@@ -199,19 +196,21 @@ No code changes: "No code changes."
 ## 8. Other documents
 
 - **README.md**: what the project is, how to install and run it, on every platform the owner uses.
-- **FAQ.md**: problems seen while running the app and how to fix them. Add an entry each time one comes up, and update it in the PR that changes the behaviour it describes.
-- **Guides** (`docs/guides/`): step-by-step guides for a non-technical person (setting up a service, preparing inputs, a full walkthrough). Keep the source (Markdown or HTML) next to any PDF made from it, and link each guide from the README or the deploy notes.
-- **Experiments** (`experiments/`): a measurement or comparison made before a decision (speed, quality, which tool) is written up with the date, the machine, the method and the numbers, and linked from the roadmap entry or decision it informed.
+The README is required. The others are written when they add real value, not as a standing obligation.
+
+- **README.md**: what the project is, how to install and run it, on every platform the owner uses.
+- **FAQ.md**: problems likely to recur while running the app and how to fix them. Keep entries current when a PR changes the behaviour they describe.
+- **Guides** (`docs/guides/`): step-by-step guides for a non-technical person (setting up a service, preparing inputs, a full walkthrough), linked from the README.
+- **Experiments** (`experiments/`): when a measurement or comparison drives a significant decision (speed, quality, which tool), write it up with the date, the machine, the method and the numbers, and link it from the roadmap entry or decision it informed.
 
 ## 9. Checklist before a PR is reported done
 
 - [ ] On a non-main branch, pushed, PR open (stacked if it depends on another open PR)
 - [ ] Size rated, Simple or Medium (Large only with a reason), never Very large
-- [ ] No AI slop (5.3): no duplicated or redundant code, shared logic generalized, simplest design and smallest change, no added scope
-- [ ] Clear names, code readable without comments; comments only for the non-obvious and for public methods used outside their class
-- [ ] Code changes: unit tests added, coverage reported, ideally 80% or more
+- [ ] Simplicity and clarity rules in 5.3 met
+- [ ] Code changes: verification suited to each behaviour (5.4), coverage reported, ideally 80% or more
 - [ ] Code changes: build, test, lint, format and type check pass
-- [ ] Code changes: logging at meaningful operations and boundaries
+- [ ] Code changes: logging for actionable failures and important slow boundaries (5.5)
 - [ ] Code changes: proof included (test summary or CI link; screenshots for UI)
 - [ ] Code changes: manual test steps with the right git commands, for every platform, saying what to look for in the UI or logs
 - [ ] Action Needed section, if the owner must do anything outside the code
