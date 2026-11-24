@@ -127,7 +127,7 @@ Rate how long a competent engineer needs to review the PR:
 
 ### 5.4 Tests and coverage (code changes only)
 - New or changed behaviour has meaningful verification suited to it: unit tests for logic, functional or integration tests where units alone can't show it works, and a manual check where neither fits. Configuration and markup need tests only when they carry behaviour. Explain any exception in the PR.
-- Aim for 80% line coverage or more on new or materially changed code, and report the number. Don't add meaningless tests to reach it.
+- Aim for 80% line coverage or more on new or materially changed code, and report the number, or `N/A` with a reason when line coverage doesn't apply (for example a configuration-only change verified manually). Don't add meaningless tests to reach it.
 - Unit tests use fake engines or services, so CI runs without special hardware, paid APIs or secrets. A PR that touches a real engine or service proves it with a manual run.
 - The repo's build, test, lint, format and type-check commands must pass before the PR is reported done.
 - Never skip, disable or loosen a test to get CI green. If CI fails on something the PR didn't touch, show that it passes on main, re-run once, and say so in a PR comment.
@@ -142,7 +142,7 @@ Don't log inside pure functions or routine operations. Never log secrets or pers
 
 ### 5.6 Proof that it works (code changes only)
 - **UI changes:** a screenshot of the running app showing the change.
-- **Non-UI changes:** the test command's summary line (ran, passed, failed, skipped) as text or a screenshot, or a link to a green CI run, plus coverage.
+- **Non-UI changes:** the test command's summary line (ran, passed, failed, skipped) as text or a screenshot, or a link to a green CI run, plus coverage (or `N/A` with a reason, 5.4).
 - **When unit tests aren't enough:** functional test output, a log excerpt, or a short video or audio clip.
 - Keep proof images out of the code branch: push them to a separate assets branch (for example `pr-assets`, in a folder named for the PR) and embed them by their raw URL.
 - A PR that only changes docs or other non-code files says "No code changes." instead.
@@ -173,7 +173,7 @@ Include the roadmap update and the new counts.
 Simple | Medium | Large (with the reason if Large)
 
 ## Proof
-Code changes: test summary (ran / passed / failed / skipped) or a green CI link, screenshots for UI changes. Coverage: NN%.
+Code changes: test summary (ran / passed / failed / skipped) or a green CI link, screenshots for UI changes. Coverage: NN% (or N/A with a reason).
 No code changes: "No code changes."
 
 ## How to test manually   (omit when there are no code changes)
@@ -195,7 +195,6 @@ No code changes: "No code changes."
 
 ## 8. Other documents
 
-- **README.md**: what the project is, how to install and run it, on every platform the owner uses.
 The README is required. The others are written when they add real value, not as a standing obligation.
 
 - **README.md**: what the project is, how to install and run it, on every platform the owner uses.
@@ -208,7 +207,7 @@ The README is required. The others are written when they add real value, not as 
 - [ ] On a non-main branch, pushed, PR open (stacked if it depends on another open PR)
 - [ ] Size rated, Simple or Medium (Large only with a reason), never Very large
 - [ ] Simplicity and clarity rules in 5.3 met
-- [ ] Code changes: verification suited to each behaviour (5.4), coverage reported, ideally 80% or more
+- [ ] Code changes: verification suited to each behaviour (5.4), coverage reported (ideally 80% or more, or N/A with a reason)
 - [ ] Code changes: build, test, lint, format and type check pass
 - [ ] Code changes: logging for actionable failures and important slow boundaries (5.5)
 - [ ] Code changes: proof included (test summary or CI link; screenshots for UI)
